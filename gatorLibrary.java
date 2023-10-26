@@ -1,8 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-
-public class gatorLibrary {
+public class gatorLibrary{
     public static void main(String[] args){
         try {
             String inputFile = args[0];
@@ -36,18 +35,18 @@ public class gatorLibrary {
             output.print("Program Terminated!!");
             input.close();
             output.close();
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e){
             /**
              * Handle Index out of Bounds Exception
              * Occurs when no input file is provided via cosole or the file extension
              * is missing.
              */
-            System.out.println("Usage: `java gatorLibrary file_name.txt`" + e);
+            System.out.println("Usage: `java gatorLibrary file_name.txt`");
             return;
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e){
             System.out.println(e);
             return;
-        } catch (IOException e) {
+        } catch (IOException e){
             e.printStackTrace();
         }
     }
