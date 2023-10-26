@@ -56,7 +56,7 @@ public class PriorityQueue {
     // Insert element into the priority queue
     public void put(int patronId, int priorityNumber){
         if (this.len >= 20){
-            System.err.println("Heap is Full!");
+            System.err.println("Heap is full!");
             return;
         }
         Patron patron = new Patron(patronId, priorityNumber);
@@ -65,7 +65,8 @@ public class PriorityQueue {
 
         while (current > 0){
             int parent = (current - 1) / 2; // parent is always >= 0
-            if ((heap[parent].priority > heap[current].priority) || 
+            
+            if (heap[parent].priority > heap[current].priority || 
                 (heap[parent].priority == heap[current].priority && 
                     heap[parent].getTimeStamp() > heap[current].getTimeStamp())){
                 // Swap if current priority is higher or timestamp is lower than the parent            
@@ -75,14 +76,49 @@ public class PriorityQueue {
         }
     }
 
-    // Return the next element in the queue
+    /** 
+     * Return the next element in the queue
+     * @return patronId with higest priority
+     */ 
     public int pop(){
         if (len <= 0){
-            System.err.println("Heap is Empty!");
+            System.err.println("Heap is empty!");
             return -1;
         }
-        len--;
-        return heap[0].id;
+
+        int id = heap[0].id; // Store patron id with highest priority
+
+        // Remove root and make the last element root
+        heap[0] = null;
+        swap(0, --len);
+
+        int current = 0;
+        while (current < len){
+            int child1 = current * 2 + 1, 
+                child2 = current * 2 + 2,
+                smallest = current;
+            
+            // Find the smallest among the three
+            if (child1 < len &&
+                    (heap[child1].priority < heap[smallest].priority ||
+                    (heap[child1].priority == heap[smallest].priority &&
+                        heap[child1].getTimeStamp() < heap[smallest].getTimeStamp()))){
+                smallest = child1;
+            }
+            if (child2 < len &&
+                    (heap[child2].priority < heap[smallest].priority ||
+                    (heap[child2].priority == heap[smallest].priority &&
+                        heap[child2].getTimeStamp() < heap[smallest].getTimeStamp()))){
+                smallest = child2;
+            }
+
+            // Swap the current element with the smallest and continue
+            if (current != smallest) {
+                swap(current, smallest);
+                current = smallest;
+            } else current = len; // Get out of the loop when there is no change
+        }
+        return id;
     }
 
     /**
@@ -90,12 +126,19 @@ public class PriorityQueue {
      */
     public static void main(String[] args){
         PriorityQueue pq = new PriorityQueue();
+        System.out.println(pq.pop());
         pq.put(1, 20);
-        pq.put(1, 10);
-        pq.put(10, 1);
-        pq.put(1, 50);
-        pq.put(1, 3);
-        pq.put(15, 1);
+        pq.put(2, 10);
+        pq.put(3, 1);
+        pq.put(4, 50);
+        pq.put(5, 3);
+        pq.put(6, 1);
+        pq.put(7, 25);
+        System.out.println(pq.pop());
+        pq.put(8, 55);
+        System.out.println(pq.pop());
+        System.out.println(pq.pop());
+
         
         for (Patron p: pq.heap){
             System.out.println(p);
