@@ -38,8 +38,8 @@ class Patron{
  * Stores 20 patron-information at most.
  */
 public class PriorityQueue {
-    public Patron[] heap;
-    public int len;
+    private Patron[] heap;
+    private int len;
 
     public PriorityQueue(){
         heap = new Patron[20];
@@ -121,6 +121,11 @@ public class PriorityQueue {
         return id;
     }
 
+    // Return size of the queue
+    public int size(){
+        return len;
+    }
+
     /**
      * Test Priority Queue impelemntation
      */
@@ -134,14 +139,15 @@ public class PriorityQueue {
         pq.put(5, 3);
         pq.put(6, 1);
         pq.put(7, 25);
+        System.out.println("size: " + pq.size());
         System.out.println(pq.pop());
         pq.put(8, 55);
         System.out.println(pq.pop());
         System.out.println(pq.pop());
-
-        
-        for (Patron p: pq.heap){
-            System.out.println(p);
-        }        
+        pq.put(9, 5);
+        System.out.println("size: " + pq.size());
+        System.out.println(pq.pop());
+        System.out.println(pq.pop());
+        System.out.println("size: " + pq.size());    
     }
 }
