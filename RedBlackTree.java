@@ -39,15 +39,6 @@ public class RedBlackTree {
         return colorFlipCount;
     }
 
-    public String printBook(int id){
-        Book book = getBook(id);
-
-        if (book != null)
-            return book.toString();
-        
-        return "Book " + id + " not found in the Library";
-    }
-
     public Book getBook(int id){
         RBTNode p = head; // node to traverse and search the tree
 

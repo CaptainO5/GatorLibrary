@@ -5,6 +5,21 @@ public class gatorLibrary{
     private static RedBlackTree library;
     private static PrintWriter output;
 
+    public static void printBook(int id){
+        Book book = library.getBook(id);
+
+        if (book != null){
+            writeToOut(
+                book.toString()
+            );
+            return;
+        }
+        
+        writeToOut(
+            "Book " + id + " not found in the Library"
+        );
+    }
+
     private static void borrowBook(int patronId, int bookId, int priority){
         Book book = library.getBook(bookId);
 
@@ -78,11 +93,29 @@ public class gatorLibrary{
                     method = cmd.substring(0, cmd.indexOf("("));
                     String[] params = cmd.substring(cmd.indexOf("(") + 1, cmd.indexOf(")")).split(", ");
 
-                    for (String param: params){
-                        System.out.println(param);
-                    }
-
                     writeToOut(cmd);
+
+                    switch (method) {
+                        case "PrintBook":
+                            printBook(Integer.parseInt(params[0]));
+                            break;
+                        case "BorrowBook":
+                            borrowBook(
+                                Integer.parseInt(params[0]),
+                                Integer.parseInt(params[1]),
+                                Integer.parseInt(params[2])
+                            );
+                            break;
+                        case "ReturnBook":
+                            returnBook(
+                                Integer.parseInt(params[0]),
+                                Integer.parseInt(params[1])
+                            );
+                            break;
+
+                        default:
+                            break;
+                    }
                     writeToOut("");
                 } else{
                     System.out.println("'Quit()' is not in input!");
