@@ -1,42 +1,4 @@
-class Book{
-    int id;
-    String name;
-    String authorName;
-    boolean available;
-    int borrowedBy;
-    PriorityQueue reservationHeap;
-
-    public Book(int bookId, String bookName, String authorName, boolean availabilityStatus){
-        this.id = bookId;
-        this.name = bookName;
-        this.authorName = authorName;
-        this.available = availabilityStatus;
-        this.borrowedBy = -1;
-        this.reservationHeap = new PriorityQueue();
-    }
-
-    public String toString(){
-        String book = "";
-        book += "BookId = " + id;
-        book += "\nTitle = " + name;
-        book += "\nAuthor = " + authorName;
-
-        book += "\nAvailability = ";
-        if (available)
-            book += "\"Yes\"";
-        else 
-            book += "\"No\"";
-
-        book += "\nBorrowedBy = ";
-        if (borrowedBy == -1)
-            book += "None";
-        else
-            book += borrowedBy;
-        book += "\nReservations = " + reservationHeap;
-
-        return book;
-    }
-}
+import java.util.*;
 
 class RBTNode{
     public static final boolean BLACK = true, RED = false;
@@ -75,6 +37,54 @@ public class RedBlackTree {
 
     public int getColoFlipCount(){
         return colorFlipCount;
+    }
+
+    public String printBook(int id){
+        Book book = getBook(id);
+
+        if (book != null)
+            return book.toString();
+        
+        return "Book " + id + " not found in the Library";
+    }
+
+    public Book getBook(int id){
+        RBTNode p = head; // node to traverse and search the tree
+
+        // Binary search tree traversal
+        while (p != null){
+            if (p.book.id == id)
+                return p.book;
+            else if (p.book.id > id)
+                p = p.left;
+            else
+                p = p.right;
+        }
+
+        // When id is not in the tree
+        return null;
+    }
+
+    /**
+     * Recursively traverse the tree in in-order and store the relavent books @param books list
+     */
+    private void getBooks(int id1, int id2, RBTNode p, List<Book> books){
+        if (p == null)
+            return;
+
+        getBooks(id1, id2, p.left, books);
+        if (id1 <= p.book.id && p.book.id <= id2)
+            books.add(p.book);
+        getBooks(id1, id2, p.right, books);
+    }
+
+    /** 
+     * Get the list of books in the range [id1, id2]
+     * */ 
+    public Book[] getBooks(int id1, int id2){
+        List<Book> books = new ArrayList<Book>();
+        getBooks(id1, id2, this.head, books);
+        return (Book[]) books.toArray();
     }
 
     public static void main(String[] args){
