@@ -2,6 +2,61 @@ import java.io.*;
 import java.util.*;
 
 public class gatorLibrary{
+    private static RedBlackTree library;
+    private static PrintWriter output;
+
+    private static void borrowBook(int patronId, int bookId, int priority){
+        Book book = library.getBook(bookId);
+
+        if (book == null){
+            writeToOut(
+                "Book " + bookId + " not found in the Library"
+            );
+            return;
+        }
+
+        if (book.available) {
+            book.available = false;
+            book.borrowedBy = patronId;
+
+            writeToOut(
+                "Book " + bookId + " Borrowed by Patron " + patronId
+            );
+        } else {
+            book.reservationHeap.put(patronId, priority);
+            
+            writeToOut(
+                "Book " + bookId + " Reserved by Patron " + patronId
+            );
+        }
+    }
+
+    private static void returnBook(int patronId, int bookId){
+        Book book = library.getBook(bookId);
+
+        if (book == null){
+            writeToOut(
+                "Book " + bookId + " not found in the Library"
+            );
+            return;
+        }
+
+        book.available = true;
+        writeToOut(
+            "Book " + bookId + " Returned by Patron " + patronId
+        );
+
+        book.borrowedBy = book.reservationHeap.pop();
+
+        if (book.borrowedBy != -1) {
+            book.available = false;
+
+            writeToOut(
+                "Book " + bookId + " Allotted to Patron " + book.borrowedBy
+            );
+        }
+    }
+
     public static void main(String[] args){
         try {
             String inputFile = args[0];
@@ -9,7 +64,9 @@ public class gatorLibrary{
 
             Scanner input = new Scanner(new File(inputFile));
 
-            PrintWriter output = new PrintWriter(new FileWriter(outputFile));
+            output = new PrintWriter(new FileWriter(outputFile));
+
+            library = new RedBlackTree();
 
             String cmd, method = "";
             // Exit when a Quit() is found in the File
@@ -25,8 +82,8 @@ public class gatorLibrary{
                         System.out.println(param);
                     }
 
-                    writeToOut(output, cmd);
-                    writeToOut(output, "");
+                    writeToOut(cmd);
+                    writeToOut("");
                 } else{
                     System.out.println("'Quit()' is not in input!");
                     cmd = "Quit()";
@@ -56,8 +113,8 @@ public class gatorLibrary{
      * @param out output writer object
      * @param text text to be written to the output
      */
-    private static void writeToOut(PrintWriter out, String text){
-        out.println(text);
+    private static void writeToOut(String text){
+        output.println(text);
         System.out.println(text);
     }
 }
