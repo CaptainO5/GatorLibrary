@@ -48,7 +48,7 @@ public class PriorityQueue {
 
     // Return a string of array of patron ids in the heap
     public String toString(){
-        String heap_str = "[";
+        String heap_str = "";
         if (len > 0)
             for (int i = 0; i < len; i++){
                 if (i == 0)
@@ -56,7 +56,6 @@ public class PriorityQueue {
                 else
                     heap_str += ", " + heap[i].id;
             }
-        heap_str += "]";
         return heap_str;
     }
 
@@ -96,7 +95,7 @@ public class PriorityQueue {
      */ 
     public int pop(){
         if (len <= 0){
-            System.err.println("Heap is empty!");
+            System.out.println("Heap is empty!");
             return -1;
         }
 

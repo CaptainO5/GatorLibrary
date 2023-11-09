@@ -1,10 +1,10 @@
 public class Book{
-    int id;
-    String name;
-    String authorName;
-    boolean available;
-    int borrowedBy;
-    PriorityQueue reservationHeap;
+    public int id;
+    private String name;
+    private String authorName;
+    public boolean available;
+    public int borrowedBy;
+    public PriorityQueue reservationHeap;
 
     public Book(int bookId, String bookName, String authorName, boolean availabilityStatus){
         this.id = bookId;
@@ -15,6 +15,7 @@ public class Book{
         this.reservationHeap = new PriorityQueue();
     }
 
+    // Print the book contents
     public String toString(){
         String book = "";
         book += "BookId = " + id;
@@ -32,7 +33,7 @@ public class Book{
             book += "None";
         else
             book += borrowedBy;
-        book += "\nReservations = " + reservationHeap;
+        book += "\nReservations = [" + reservationHeap + "]";
 
         return book;
     }
