@@ -46,6 +46,20 @@ public class PriorityQueue {
         len = 0;
     }
 
+    // Return a string of array of patron ids in the heap
+    public String toString(){
+        String heap_str = "[";
+        if (len > 0)
+            for (int i = 0; i < len; i++){
+                if (i == 0)
+                    heap_str += heap[i].id;
+                else
+                    heap_str += ", " + heap[i].id;
+            }
+        heap_str += "]";
+        return heap_str;
+    }
+
     // Help swap elements in heap array
     private void swap(int i, int j){
         Patron temp = heap[i];
@@ -132,16 +146,20 @@ public class PriorityQueue {
     public static void main(String[] args){
         PriorityQueue pq = new PriorityQueue();
         System.out.println(pq.pop());
-        pq.put(1, 20);
-        pq.put(2, 10);
+        pq.put(1, 1);
+        pq.put(2, 12);
         pq.put(3, 1);
-        pq.put(4, 50);
-        pq.put(5, 3);
-        pq.put(6, 1);
-        pq.put(7, 25);
+        pq.put(4, 8);
+        pq.put(5, 1);
+        pq.put(6, 11);
+        pq.put(7, 1);
+        System.out.println(pq);
         System.out.println("size: " + pq.size());
         System.out.println(pq.pop());
-        pq.put(8, 55);
+        System.out.println(pq.pop());
+        System.out.println(pq.pop());
+        System.out.println(pq.pop());
+        pq.put(8, 25);
         System.out.println(pq.pop());
         System.out.println(pq.pop());
         pq.put(9, 5);
