@@ -38,7 +38,44 @@ class Book{
     }
 }
 
+class RBTNode{
+    public static final boolean BLACK = true, RED = false;
+
+    Book book;
+    boolean color; // color of the node (true -> black; false -> red)
+    RBTNode left, right;
+
+    public RBTNode(Book b){
+        book = b;
+        color = RBTNode.BLACK; // Default the color to black
+    }
+
+    public RBTNode(Book b, boolean color){
+        book = b;
+        this.color = color;
+    }
+
+    public void flipColor(){
+        /* XOr to flip the node color
+        *  Equivalent of color = !color
+        */
+        color ^= true;
+    }
+}
+
 public class RedBlackTree {
+
+    public RBTNode head;
+    private int colorFlipCount; // Variable to store the color flip count
+
+    public RedBlackTree(){
+        head = null;
+        colorFlipCount = 0;
+    }
+
+    public int getColoFlipCount(){
+        return colorFlipCount;
+    }
 
     public static void main(String[] args){
         Book b = new Book(1, "newBook", "someone", true);
