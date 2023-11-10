@@ -5,19 +5,23 @@ public class gatorLibrary{
     private static RedBlackTree library;
     private static PrintWriter output;
 
-    public static void printBook(int id){
-        Book book = library.getBook(id);
+    public static void printBook(int bookId){
+        Book book = library.getBook(bookId);
 
-        if (book != null){
+        if (book != null)
             writeToOut(
                 book.toString()
             );
-            return;
+        else
+            writeToOut(
+                "Book " + bookId + " not found in the Library"
+            );
+    }
+
+    public static void printBooks(int bookId1, int bookId2){
+        for (Book book: library.getBooks(bookId1, bookId2)){
+            writeToOut(book.toString());
         }
-        
-        writeToOut(
-            "Book " + id + " not found in the Library"
-        );
     }
 
     private static void borrowBook(int patronId, int bookId, int priority){
@@ -72,10 +76,36 @@ public class gatorLibrary{
         }
     }
 
+    public static void deleteBook(int bookId){
+        Book book = library.delete(bookId);
+        if (book == null){
+            writeToOut(
+                "Book " + bookId + " not found in the Library"
+            );
+            return;
+        }
+
+        String out = "Book " + bookId + " is no longer available.";
+
+        if (book.reservationHeap.size() > 0){
+            out += " Reservations made by Patrons " + book.reservationHeap + " have been cancelled!";
+        }
+
+        writeToOut(out);
+    }
+
     public static void main(String[] args){
         try {
+            if (args.length != 1){
+                System.err.println("Usage: `java gatorLibrary file_name.txt`");
+                return;
+            }
             String inputFile = args[0];
-            String outputFile = inputFile.split("\\.")[0] + "_output_file.txt";
+            if (!inputFile.endsWith(".txt")){
+                System.err.println("The input file must be a text file (ending with .txt)!");
+                return;
+            }
+            String outputFile = inputFile.substring(0, inputFile.length() - 4) + "_output_file.txt";
 
             Scanner input = new Scanner(new File(inputFile));
 
@@ -93,11 +123,27 @@ public class gatorLibrary{
                     method = cmd.substring(0, cmd.indexOf("("));
                     String[] params = cmd.substring(cmd.indexOf("(") + 1, cmd.indexOf(")")).split(", ");
 
-                    writeToOut(cmd);
+                    System.out.println("Command read: " + cmd);
 
                     switch (method) {
+                        case "InsertBook":
+                            library.insert(
+                                new Book(
+                                    Integer.parseInt(params[0]),
+                                    params[1],
+                                    params[2],
+                                    params[3].equals("\"Yes\"")
+                                )
+                            );
+                            break;
                         case "PrintBook":
                             printBook(Integer.parseInt(params[0]));
+                            break;
+                        case "PrintBooks":
+                            printBooks(
+                                Integer.parseInt(params[0]),
+                                Integer.parseInt(params[1])
+                                );
                             break;
                         case "BorrowBook":
                             borrowBook(
@@ -112,11 +158,15 @@ public class gatorLibrary{
                                 Integer.parseInt(params[1])
                             );
                             break;
-
+                        case "DeleteBook":
+                            deleteBook(Integer.parseInt(params[0]));
+                            break;
+                        case "ColorFlipCount":
+                            writeToOut("Colour Flip Count: " + library.getColoFlipCount());
+                            break;
                         default:
                             break;
                     }
-                    writeToOut("");
                 } else{
                     System.out.println("'Quit()' is not in input!");
                     cmd = "Quit()";
@@ -128,11 +178,9 @@ public class gatorLibrary{
         } catch (ArrayIndexOutOfBoundsException e){
             /**
              * Handle Index out of Bounds Exception
-             * Occurs when no input file is provided via cosole or the file extension
-             * is missing.
+             * Occurs when the parameters in input file are specified wrongly!
              */
-            System.out.println("Usage: `java gatorLibrary file_name.txt`");
-            return;
+            System.err.println("Check the number of parameters!");
         } catch (FileNotFoundException e){
             System.out.println(e);
             return;
@@ -147,7 +195,7 @@ public class gatorLibrary{
      * @param text text to be written to the output
      */
     private static void writeToOut(String text){
-        output.println(text);
-        System.out.println(text);
+        output.println(text + "\n");
+        System.out.println(text + "\n");
     }
 }
