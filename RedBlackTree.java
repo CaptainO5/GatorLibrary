@@ -56,6 +56,65 @@ public class RedBlackTree {
         return null;
     }
 
+    public void insert(Book book){
+        RBTNode newNode = new RBTNode(book);
+
+        if (head == null)
+            head = newNode;
+
+        RBTNode p = head; // node to traverse and search the tree
+
+        // Binary search tree traversal
+        while (p != null){
+            if (p.book.id == book.id)
+                return;
+            else if (p.book.id > book.id){
+                if (p.left == null){
+                    p.left = newNode;
+                    return;
+                }
+                p = p.left;
+            }
+                
+            else{
+                if (p.right == null){
+                    p.right = newNode;
+                    return;
+                }
+                p = p.right;
+            }
+        }
+    }
+
+    public Book delete(int id){
+        // if (head.book.id == id){
+        //     Book book = head.book;
+        //     head = null;
+        //     return book;
+        // }
+
+        // RBTNode p = head; // node to traverse and search the tree
+
+        // // Binary search tree traversal
+        // while (p != null){
+        //     if (p.book.id > id){
+        //         if (p.left != null && p.left.book.id == id){
+
+        //         }
+        //         p = p.left;
+        //     }
+                
+        //     else if (p.book.id < id){
+        //         if (p.right == null){
+        //             return null;
+        //         }
+        //         p = p.right;
+        //     }
+        // }
+        // return null;
+        return getBook(id);
+    }
+
     /**
      * Recursively traverse the tree in in-order and store the relavent books @param books list
      */
@@ -72,10 +131,10 @@ public class RedBlackTree {
     /** 
      * Get the list of books in the range [id1, id2]
      * */ 
-    public Book[] getBooks(int id1, int id2){
+    public List<Book> getBooks(int id1, int id2){
         List<Book> books = new ArrayList<Book>();
         getBooks(id1, id2, this.head, books);
-        return (Book[]) books.toArray();
+        return books;
     }
 
     public static void main(String[] args){
