@@ -1,4 +1,5 @@
 import java.util.*;
+import java.lang.Math;
 
 class RBTNode{
     public static final boolean BLACK = true, RED = false;
@@ -37,6 +38,33 @@ public class RedBlackTree {
 
     public int getColoFlipCount(){
         return colorFlipCount;
+    }
+
+    public Book[] findNearest(int targetId){
+        Book[] nearest = new Book[2];
+        RBTNode p = head; // node to traverse and search the tree
+
+        // Binary search tree traversal
+        while (p != null){
+            if (nearest[0] == null)
+                nearest[0] = p.book;
+            else {
+                int min_dif = Math.abs(nearest[0].id - targetId);
+                int dif = Math.abs(p.book.id - targetId);
+                if (min_dif > dif)
+                    nearest[0] = p.book;
+                else if (min_dif == dif)
+                    nearest[1] = p.book;
+            }
+            if (p.book.id > targetId)
+                p = p.left;
+            else
+                p = p.right;
+        }
+
+        // When id is not in the tree
+        return nearest;
+
     }
 
     public Book getBook(int id){

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.lang.Math;
 
 public class gatorLibrary{
     private static RedBlackTree library;
@@ -94,6 +95,18 @@ public class gatorLibrary{
         writeToOut(out);
     }
 
+    private static void findCloset(int targetId) {
+        Book[] nearest = library.findNearest(targetId);
+        if (nearest[0] == null){
+            System.out.println("No Books in the Library yet!\n");
+            return;
+        }
+        writeToOut(nearest[0].toString());
+
+        if (nearest[1] != null && Math.abs(nearest[0].id - targetId) == Math.abs(nearest[1].id - targetId))
+            writeToOut(nearest[1].toString());
+    }
+
     public static void main(String[] args){
         try {
             if (args.length != 1){
@@ -160,6 +173,9 @@ public class gatorLibrary{
                             break;
                         case "DeleteBook":
                             deleteBook(Integer.parseInt(params[0]));
+                            break;
+                        case "FindClosestBook":
+                            findCloset(Integer.parseInt(params[0]));
                             break;
                         case "ColorFlipCount":
                             writeToOut("Colour Flip Count: " + library.getColoFlipCount());
