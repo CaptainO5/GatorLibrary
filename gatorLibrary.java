@@ -20,9 +20,14 @@ public class gatorLibrary{
     }
 
     public static void printBooks(int bookId1, int bookId2){
+        boolean found = false;
         for (Book book: library.getBooks(bookId1, bookId2)){
+            found = true;
             writeToOut(book.toString());
         }
+
+        if (!found)
+            System.out.println("No books found in the range [" + bookId1 + ", " + bookId2 + "]\n");
     }
 
     private static void borrowBook(int patronId, int bookId, int priority){
