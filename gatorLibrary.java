@@ -6,7 +6,7 @@ public class gatorLibrary{
     private static RedBlackTree library;
     private static PrintWriter output;
 
-    public static void printBook(int bookId){
+    private static void printBook(int bookId){
         Book book = library.getBook(bookId);
 
         if (book != null)
@@ -19,13 +19,14 @@ public class gatorLibrary{
             );
     }
 
-    public static void printBooks(int bookId1, int bookId2){
-        boolean found = false;
+    private static void printBooks(int bookId1, int bookId2){
+        boolean found = false; // Var to check if books found in the given range
         for (Book book: library.getBooks(bookId1, bookId2)){
             found = true;
             writeToOut(book.toString());
         }
 
+        // When there are no books in the given range
         if (!found)
             System.out.println("No books found in the range [" + bookId1 + ", " + bookId2 + "]\n");
     }
@@ -82,7 +83,7 @@ public class gatorLibrary{
         }
     }
 
-    public static void deleteBook(int bookId){
+    private static void deleteBook(int bookId){
         Book book = library.delete(bookId);
         if (book == null){
             writeToOut(

@@ -87,8 +87,10 @@ public class RedBlackTree {
     }
 
     public void insert(Book book){
+        // Search for the location to insert the book
         RBTNode found = search(book.id);
 
+        // Insert the book in the correct location in the tree
         if (found == null)
             head = new RBTNode(book, RBTNode.BLACK);
         else if (found.book.id != book.id){
@@ -99,6 +101,8 @@ public class RedBlackTree {
                 found.right = newNode;
             }
         }
+
+        // TODO check if the RBTree properties are met or make the necessary changes
     }
 
     public Book delete(int id){
