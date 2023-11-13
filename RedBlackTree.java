@@ -6,16 +6,35 @@ class RBTNode{
 
     Book book;
     boolean color; // color of the node (true -> black; false -> red)
-    RBTNode left, right;
+    RBTNode left, right, parent;
 
     public RBTNode(Book b){
         book = b;
-        color = RBTNode.BLACK; // Default the color to black
+        color = RBTNode.RED; // Default the color to red
     }
 
     public RBTNode(Book b, boolean color){
         book = b;
         this.color = color;
+    }
+
+    public RBTNode(Book b, RBTNode parent){
+        book = b;
+        this.parent = parent;
+        this.color = RBTNode.RED;
+    }
+
+    public int childCount(){
+        int count = 0;
+        if (left != null)
+            count++;
+        if (right != null)
+            count++;
+        return count;
+    }
+
+    public boolean isLeftChild(){
+        return parent.left == this;
     }
 
     public void flipColor(){
@@ -40,76 +59,44 @@ public class RedBlackTree {
         return colorFlipCount;
     }
 
-    public Book[] findNearest(int targetId){
-        Book[] nearest = new Book[2];
+    /**
+     * Search for the node with given key (book id)
+     * 
+     * @return the node if found or the parent of the node
+     */
+    private RBTNode search(int key){
         RBTNode p = head; // node to traverse and search the tree
 
         // Binary search tree traversal
         while (p != null){
-            if (nearest[0] == null)
-                nearest[0] = p.book;
-            else {
-                int min_dif = Math.abs(nearest[0].id - targetId);
-                int dif = Math.abs(p.book.id - targetId);
-                if (min_dif > dif)
-                    nearest[0] = p.book;
-                else if (min_dif == dif)
-                    nearest[1] = p.book;
+            if (p.book.id == key)
+                return p;
+            else if (p.book.id > key){
+                if (p.left == null)
+                    return p;
+                p = p.left;
+            } else {
+                if (p.right == null)
+                    return p;
+                p = p.right;
             }
-            if (p.book.id > targetId)
-                p = p.left;
-            else
-                p = p.right;
         }
 
-        // When id is not in the tree
-        return nearest;
-
-    }
-
-    public Book getBook(int id){
-        RBTNode p = head; // node to traverse and search the tree
-
-        // Binary search tree traversal
-        while (p != null){
-            if (p.book.id == id)
-                return p.book;
-            else if (p.book.id > id)
-                p = p.left;
-            else
-                p = p.right;
-        }
-
-        // When id is not in the tree
-        return null;
+        // When head is null
+        return p;
     }
 
     public void insert(Book book){
-        RBTNode newNode = new RBTNode(book);
+        RBTNode found = search(book.id);
 
-        if (head == null)
-            head = newNode;
-
-        RBTNode p = head; // node to traverse and search the tree
-
-        // Binary search tree traversal
-        while (p != null){
-            if (p.book.id == book.id)
-                return;
-            else if (p.book.id > book.id){
-                if (p.left == null){
-                    p.left = newNode;
-                    return;
-                }
-                p = p.left;
-            }
-                
+        if (found == null)
+            head = new RBTNode(book, RBTNode.BLACK);
+        else if (found.book.id != book.id){
+            RBTNode newNode = new RBTNode(book, found); // Set found as the parent
+            if (found.book.id > book.id)
+                found.left = newNode;
             else{
-                if (p.right == null){
-                    p.right = newNode;
-                    return;
-                }
-                p = p.right;
+                found.right = newNode;
             }
         }
     }
@@ -143,13 +130,60 @@ public class RedBlackTree {
         return getBook(id);
     }
 
+    public Book[] findNearest(int targetId){
+        Book[] nearest = new Book[2];
+        RBTNode p = head; // node to traverse and search the tree
+
+        // Binary search tree traversal
+        while (p != null){
+            if (nearest[0] == null)
+                nearest[0] = p.book;
+            else {
+                int min_dif = Math.abs(nearest[0].id - targetId);
+                int dif = Math.abs(p.book.id - targetId);
+                if (min_dif > dif)
+                    nearest[0] = p.book;
+                else if (min_dif == dif)
+                    nearest[1] = p.book;
+            }
+            if (p.book.id > targetId)
+                p = p.left;
+            else
+                p = p.right;
+        }
+
+        // When id is not in the tree
+        return nearest;
+
+    }
+
     /**
-     * Recursively traverse the tree in in-order and store the relavent books @param books list
+     * Search method to find the book with given id
+     * @param id bookId to search in the tree
+     * @return the book if found else return null
+     */
+    public Book getBook(int id){
+        // Use internal search method to find the node with given bookId
+        RBTNode found = search(id);
+
+        // Return the book if found
+        if (found != null && found.book.id == id)
+            return found.book;
+
+        // When id is not in the tree
+        return null;
+    }
+
+    /**
+     * Helper recursive method to get the relavent books
+     * @param p Current head of the recursive tree
+     * @param books Globsl list to store the results
      */
     private void getBooks(int id1, int id2, RBTNode p, List<Book> books){
         if (p == null)
             return;
 
+        // Recursively traverse the tree in in-order and store the relavent books in the range
         getBooks(id1, id2, p.left, books);
         if (id1 <= p.book.id && p.book.id <= id2)
             books.add(p.book);
@@ -169,5 +203,4 @@ public class RedBlackTree {
         Book b = new Book(1, "newBook", "someone", true);
         System.out.println(b);
     }
-    
 }
