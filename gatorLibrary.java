@@ -83,6 +83,7 @@ public class gatorLibrary{
         }
     }
 
+    // Helper method for DeleteBook()
     private static void deleteBook(int bookId){
         Book book = library.delete(bookId);
         if (book == null){
@@ -94,23 +95,30 @@ public class gatorLibrary{
 
         String out = "Book " + bookId + " is no longer available.";
 
-        if (book.reservationHeap.size() > 0){
+        if (book.reservationHeap.size() > 0)
             out += " Reservations made by Patrons " + book.reservationHeap + " have been cancelled!";
-        }
 
         writeToOut(out);
     }
 
-    private static void findCloset(int targetId) {
+    private static void findClosest(int targetId) {
         Book[] nearest = library.findNearest(targetId);
         if (nearest[0] == null){
             System.out.println("No Books in the Library yet!\n");
             return;
         }
+        // In case of tie, print both in the id order
+        if (nearest[1] != null && Math.abs(nearest[0].id - targetId) == Math.abs(nearest[1].id - targetId)){
+            if (nearest[1].id > nearest[0].id){
+                writeToOut(nearest[0].toString());
+                writeToOut(nearest[1].toString());
+            } else {
+                writeToOut(nearest[1].toString());
+                writeToOut(nearest[0].toString());
+            }
+            return;
+        }
         writeToOut(nearest[0].toString());
-
-        if (nearest[1] != null && Math.abs(nearest[0].id - targetId) == Math.abs(nearest[1].id - targetId))
-            writeToOut(nearest[1].toString());
     }
 
     public static void main(String[] args){
@@ -180,7 +188,7 @@ public class gatorLibrary{
                         deleteBook(Integer.parseInt(params[0]));
                         break;
                     case "FindClosestBook":
-                        findCloset(Integer.parseInt(params[0]));
+                        findClosest(Integer.parseInt(params[0]));
                         break;
                     case "ColorFlipCount":
                         writeToOut("Colour Flip Count: " + library.getColoFlipCount());
@@ -213,7 +221,6 @@ public class gatorLibrary{
 
     /**
      * Write the given text to output file and teh stdout
-     * @param out output writer object
      * @param text text to be written to the output
      */
     private static void writeToOut(String text){

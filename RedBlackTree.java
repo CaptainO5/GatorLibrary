@@ -33,7 +33,7 @@ class RBTNode{
         return count;
     }
 
-    public int getRedChildCount(){
+    public int redChildCount(){
         int count = 0;
         if (left != null && left.color == RBTNode.RED)
             count++;
@@ -157,7 +157,7 @@ public class RedBlackTree {
         // if p is the head
         if (pp == null){
             p.color = RBTNode.BLACK;
-            colorFlipCount++;
+            colorFlipCount--;
             return;
         }
 
@@ -167,7 +167,7 @@ public class RedBlackTree {
         RBTNode gp = pp.parent; // Not NULL since p.parent != head
 
         // Case XYr: when both the children of gp are red
-        if (gp.getRedChildCount() == 2){
+        if (gp.redChildCount() == 2){
             gp.flipColor();
             gp.left.flipColor();
             gp.right.flipColor();
@@ -227,33 +227,192 @@ public class RedBlackTree {
         }
     }
 
+    private RBTNode searchMin(RBTNode head){
+        RBTNode p = head;
+        while(p.left != null){
+            p = p.left;
+        }
+        return p;
+    }
+
+    // private RBTNode searchMax(RBTNode head){
+    //     RBTNode p = head;
+    //     while(p.right != null){
+    //         p = p.right;
+    //     }
+    //     return p;
+    // }
+
+    private void balanceAfterDelete(RBTNode py, RBTNode y) {
+        System.out.println("Here to balance after delete!");
+        /* Using Xcn cases to balance the tree
+         */ 
+
+        if (py == null)
+            return;
+        
+        // X = L
+        if (py.left == y){
+            
+        } 
+        // X = R
+        else{
+            // c = b
+            // Case Rb0
+            if (py.left == null || (py.left.color == RBTNode.BLACK && py.left.redChildCount() == 0)){
+                if (py.left != null){
+                    py.left.flipColor();
+                    colorFlipCount++;
+                }
+                // Rb0 (case 2 py is red)
+                if (py.color == RBTNode.RED){
+                    py.flipColor();
+                    colorFlipCount++;
+                } 
+                // Rb0 (case 1 py is black)
+                else
+                    balanceAfterDelete(py.parent, py);
+                return;
+            } 
+            // c = b
+            else if (py.left.color == RBTNode.BLACK){
+                // Case Rb1 (case 1)
+                if (py.left.redChildCount() == 1 && py.left.left != null && py.left.left.color == RBTNode.RED){
+                    py.left.left.flipColor();
+                    colorFlipCount++;
+                    if (py.color == RBTNode.RED){
+                        py.flipColor();
+                        py.left.flipColor();
+                        colorFlipCount += 2;
+                    }
+                    rotateCaseLL(py);
+                    return;
+                }
+                // Case Rb1 (case 2) and Rb2
+                else {
+                    if (py.color == RBTNode.RED)
+                        py.flipColor();
+                    else
+                        py.left.right.flipColor();
+                    colorFlipCount++;
+                    rotateCaseLR(py);
+                    return;
+                }
+            }
+            // c = r
+            else{
+                // Case Rr(0)
+                RBTNode v = py.left;
+                RBTNode w = py.left.right;
+                if (w == null || w.redChildCount() == 0){
+                    v.flipColor();
+                    colorFlipCount++;
+                    if (w != null){
+                        w.flipColor();
+                        colorFlipCount++;
+                    }
+                    rotateCaseLL(py);
+                    return;
+                } 
+                // Case Rr(1) (case 1)
+                else if (w.redChildCount() == 1 && w.left != null && w.left.color == RBTNode.RED){
+                    w.left.flipColor();
+                    colorFlipCount++;
+                    rotateCaseLR(py);
+                    return;
+                }
+                // Case Rr(1) (case 2) and Rr(2)
+                else{
+                    RBTNode x = w.right;
+                    x.flipColor();
+                    colorFlipCount++;
+
+                    // Rotation to make x the parent of py
+                    w.right = x.left;
+                    if (w.right != null)
+                        w.right.parent = w;
+
+                    x.left = v;
+                    v.parent = x;
+
+                    py.left = x.right;
+                    if (py.left != null)
+                        py.left.parent = py;
+                    
+                    x.right = py;
+                    x.parent = py.parent;
+                    py.parent = x;
+
+                    if (x.parent == null)
+                        head = x;
+                }
+            }
+        }
+    }
+
     public Book delete(int id){
-        // if (head.book.id == id){
-        //     Book book = head.book;
-        //     head = null;
-        //     return book;
-        // }
+        RBTNode p = search(id);
+        if (p.book.id != id)
+            return null;
 
-        // RBTNode p = head; // node to traverse and search the tree
+        if (p.childCount() == 2){
+            // RBTNode swap = searchMax(p.left);
+            RBTNode swap = searchMin(p.right);
+            p.book = swap.book;
+            p = swap;
+        } 
+        
+        RBTNode py = p.parent;
+        RBTNode y;
 
-        // // Binary search tree traversal
-        // while (p != null){
-        //     if (p.book.id > id){
-        //         if (p.left != null && p.left.book.id == id){
+        // if p is the head
+        if (py == null){
+            if (p.left != null)
+                head = p.left;
+            else
+                head = p.right;
+            if (head != null){
+                head.parent = null;
+                if (head.color != RBTNode.BLACK){
+                    head.flipColor();
+                    colorFlipCount++;
+                }
+            }   
+            return p.book;
+        }
+        
+        if (p.left != null){
+            if (p.isLeftChild())
+                py.left = p.left;
+            else
+                py.right = p.left;
+            y = p.left;
+        } else{
+            if (p.isLeftChild())
+                py.left = p.right;
+            else
+                py.right = p.right;
+            y = p.right;
+        }
 
-        //         }
-        //         p = p.left;
-        //     }
-                
-        //     else if (p.book.id < id){
-        //         if (p.right == null){
-        //             return null;
-        //         }
-        //         p = p.right;
-        //     }
-        // }
-        // return null;
-        return getBook(id);
+        if (y != null)
+            y.parent = py;
+        
+        // When removed node is red: No black node deficiency in the tree
+        if (p.color == RBTNode.RED)
+            return p.book;
+        
+        // When p is black, has a child and that child is RED
+        if (y != null && y.color == RBTNode.RED){
+            y.flipColor();
+            colorFlipCount++;
+            return p.book;
+        }
+
+        // When y is null or black
+        balanceAfterDelete(py, y);
+
+        return p.book;
     }
 
     public Book[] findNearest(int targetId){
@@ -278,9 +437,7 @@ public class RedBlackTree {
                 p = p.right;
         }
 
-        // When id is not in the tree
         return nearest;
-
     }
 
     /**
@@ -344,8 +501,12 @@ public class RedBlackTree {
     public static void main(String[] args){
         RedBlackTree rbt = new RedBlackTree();
         rbt.insert(new Book(2, "newBook", "someone", true));
+        
         rbt.insert(new Book(1, "newBook", "someone", true));
+        
         rbt.insert(new Book(3, "newBook", "someone", true));
+        rbt.delete(2);
+        System.err.println(rbt.getColoFlipCount());
         rbt.printTree();
         rbt.insert(new Book(4, "newBook", "someone", true));
         rbt.printTree();
@@ -353,11 +514,15 @@ public class RedBlackTree {
         rbt.printTree();
         rbt.insert(new Book(5, "newBook", "someone", true));
         rbt.printTree();
+        rbt.delete(0);
         rbt.insert(new Book(25, "newBook", "someone", true));
         rbt.printTree();
         rbt.insert(new Book(20, "newBook", "someone", true));
         rbt.printTree();
         rbt.insert(new Book(7, "newBook", "someone", true));
+        rbt.delete(20);
+        rbt.printTree();
+        rbt.delete(25);        
         rbt.printTree();
     }
 }
