@@ -134,67 +134,65 @@ public class gatorLibrary{
 
             String cmd, method = "";
             // Exit when a Quit() is found in the File
-            while (!method.equals("Quit")){
-                if (input.hasNextLine()){
-                    cmd = input.nextLine();
+            while (!method.equals("Quit") && input.hasNextLine()){
+                cmd = input.nextLine();
 
-                    // Divide the input text into method and parameters
-                    method = cmd.substring(0, cmd.indexOf("("));
-                    String[] params = cmd.substring(cmd.indexOf("(") + 1, cmd.indexOf(")")).split(", ");
+                System.out.println("Command read: " + cmd);
 
-                    System.out.println("Command read: " + cmd);
+                // Divide the input text into method and parameters
+                method = cmd.substring(0, cmd.indexOf("("));
+                String[] params = cmd.substring(cmd.indexOf("(") + 1, cmd.indexOf(")")).split(", ");
 
-                    switch (method) {
-                        case "InsertBook":
-                            library.insert(
-                                new Book(
-                                    Integer.parseInt(params[0]),
-                                    params[1],
-                                    params[2],
-                                    params[3].equals("\"Yes\"")
-                                )
-                            );
-                            break;
-                        case "PrintBook":
-                            printBook(Integer.parseInt(params[0]));
-                            break;
-                        case "PrintBooks":
-                            printBooks(
+                switch (method) {
+                    case "InsertBook":
+                        library.insert(
+                            new Book(
                                 Integer.parseInt(params[0]),
-                                Integer.parseInt(params[1])
-                                );
-                            break;
-                        case "BorrowBook":
-                            borrowBook(
-                                Integer.parseInt(params[0]),
-                                Integer.parseInt(params[1]),
-                                Integer.parseInt(params[2])
+                                params[1],
+                                params[2],
+                                params[3].equals("\"Yes\"")
+                            )
+                        );
+                        break;
+                    case "PrintBook":
+                        printBook(Integer.parseInt(params[0]));
+                        break;
+                    case "PrintBooks":
+                        printBooks(
+                            Integer.parseInt(params[0]),
+                            Integer.parseInt(params[1])
                             );
-                            break;
-                        case "ReturnBook":
-                            returnBook(
-                                Integer.parseInt(params[0]),
-                                Integer.parseInt(params[1])
-                            );
-                            break;
-                        case "DeleteBook":
-                            deleteBook(Integer.parseInt(params[0]));
-                            break;
-                        case "FindClosestBook":
-                            findCloset(Integer.parseInt(params[0]));
-                            break;
-                        case "ColorFlipCount":
-                            writeToOut("Colour Flip Count: " + library.getColoFlipCount());
-                            break;
-                        default:
-                            break;
-                    }
-                } else{
-                    System.out.println("'Quit()' is not in input!");
-                    cmd = "Quit()";
+                        break;
+                    case "BorrowBook":
+                        borrowBook(
+                            Integer.parseInt(params[0]),
+                            Integer.parseInt(params[1]),
+                            Integer.parseInt(params[2])
+                        );
+                        break;
+                    case "ReturnBook":
+                        returnBook(
+                            Integer.parseInt(params[0]),
+                            Integer.parseInt(params[1])
+                        );
+                        break;
+                    case "DeleteBook":
+                        deleteBook(Integer.parseInt(params[0]));
+                        break;
+                    case "FindClosestBook":
+                        findCloset(Integer.parseInt(params[0]));
+                        break;
+                    case "ColorFlipCount":
+                        writeToOut("Colour Flip Count: " + library.getColoFlipCount());
+                        break;
+                    default:
+                        break;
                 }
             }
-            output.print("Program Terminated!!");
+            if (!method.equals("Quit"))
+                System.out.println("'Quit()' is not in input!");
+            else
+                output.print("Program Terminated!!");
             input.close();
             output.close();
         } catch (ArrayIndexOutOfBoundsException e){
@@ -208,6 +206,8 @@ public class gatorLibrary{
             return;
         } catch (IOException e){
             e.printStackTrace();
+        } catch (Exception e){
+            System.err.println("Invalid input in the text file!");
         }
     }
 

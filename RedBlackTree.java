@@ -33,6 +33,16 @@ class RBTNode{
         return count;
     }
 
+    public int getRedChildCount(){
+        int count = 0;
+        if (left != null && left.color == RBTNode.RED)
+            count++;
+        if (right != null && right.color == RBTNode.RED)
+            count++;
+        return count;
+    }
+
+    // Check if the current node is the left child of parent
     public boolean isLeftChild(){
         return parent.left == this;
     }
@@ -43,10 +53,14 @@ class RBTNode{
         */
         color ^= true;
     }
+
+    // Print Id and color of the node
+    public String toString(){
+        return book.id + "(" + (color?"B":"R") + ")";
+    }
 }
 
 public class RedBlackTree {
-
     public RBTNode head;
     private int colorFlipCount; // Variable to store the color flip count
 
@@ -86,6 +100,113 @@ public class RedBlackTree {
         return p;
     }
 
+    private void rotateCaseRR(RBTNode n){
+        RBTNode m = n.right;
+
+        n.right = m.left;
+        m.left = n;
+
+        if (n.right != null)
+            n.right.parent = n;
+
+        m.parent = n.parent;
+        if (n == head)
+            head = m;
+        else if (n.isLeftChild())
+            m.parent.left = m;
+        else
+            m.parent.right = m;
+
+        n.parent = m;
+    }
+
+    private void rotateCaseLL(RBTNode n){
+        RBTNode m = n.left;
+
+        n.left = m.right;
+        m.right = n;
+
+        if (n.left != null)
+            n.left.parent = n;
+
+        m.parent = n.parent;
+        if (n == head)
+            head = m;
+        else if (n.isLeftChild())
+            m.parent.left = m;
+        else
+            m.parent.right = m;
+
+        n.parent = m;
+    }
+
+    private void rotateCaseLR(RBTNode n){
+        rotateCaseRR(n.left);
+        rotateCaseLL(n);
+    }
+
+    private void rotateCaseRL(RBTNode n){
+        rotateCaseLL(n.right);
+        rotateCaseRR(n);
+    }
+
+    // Check and fix the RedBlack Tree property on insert
+    private void balanceAfterInsert(RBTNode p){
+        RBTNode pp = p.parent;
+
+        // if p is the head
+        if (pp == null){
+            p.color = RBTNode.BLACK;
+            colorFlipCount++;
+            return;
+        }
+
+        if (pp.color == RBTNode.BLACK)
+            return;
+
+        RBTNode gp = pp.parent; // Not NULL since p.parent != head
+
+        // Case XYr: when both the children of gp are red
+        if (gp.getRedChildCount() == 2){
+            gp.flipColor();
+            gp.left.flipColor();
+            gp.right.flipColor();
+            colorFlipCount += 3;
+            balanceAfterInsert(gp);
+            return;
+        }
+        // Csse LLb: when p and pp are left children
+        if (p.isLeftChild() && pp.isLeftChild()){
+            pp.flipColor();
+            gp.flipColor();
+            colorFlipCount += 2;
+            rotateCaseLL(gp);
+            return;
+        }
+        // Case RRb: when p and pp are right children
+        if (!p.isLeftChild() && !pp.isLeftChild()){
+            pp.flipColor();
+            gp.flipColor();
+            colorFlipCount += 2;
+            rotateCaseRR(gp);
+            return;
+        }
+        // Casr LRb: when p is the right child and pp is the left child
+        if (!p.isLeftChild() && pp.isLeftChild()){
+            p.flipColor();
+            gp.flipColor();
+            colorFlipCount += 2;
+            rotateCaseLR(gp);
+        } 
+        // Case RLb: when p is the left child and pp is the right child
+        else{
+            p.flipColor();
+            gp.flipColor();
+            colorFlipCount += 2;
+            rotateCaseRL(gp);
+        }
+    }
+
     public void insert(Book book){
         // Search for the location to insert the book
         RBTNode found = search(book.id);
@@ -100,9 +221,10 @@ public class RedBlackTree {
             else{
                 found.right = newNode;
             }
-        }
 
-        // TODO check if the RBTree properties are met or make the necessary changes
+            // Check if the RBTree properties are met or make the necessary changes
+            balanceAfterInsert(newNode);
+        }
     }
 
     public Book delete(int id){
@@ -203,8 +325,39 @@ public class RedBlackTree {
         return books;
     }
 
+    private void printTree(RBTNode head){
+        if (head == null)
+            return;
+        RBTNode p = head;
+        printTree(p.left);
+        System.out.print(p + " ");
+        printTree(p.right);
+    }
+
+    // Print in-order traversal of the tree (With colors)
+    public void printTree(){
+        printTree(head);
+        System.out.println("");
+    }
+
+    // Test the working of RB-Tree
     public static void main(String[] args){
-        Book b = new Book(1, "newBook", "someone", true);
-        System.out.println(b);
+        RedBlackTree rbt = new RedBlackTree();
+        rbt.insert(new Book(2, "newBook", "someone", true));
+        rbt.insert(new Book(1, "newBook", "someone", true));
+        rbt.insert(new Book(3, "newBook", "someone", true));
+        rbt.printTree();
+        rbt.insert(new Book(4, "newBook", "someone", true));
+        rbt.printTree();
+        rbt.insert(new Book(0, "newBook", "someone", true));
+        rbt.printTree();
+        rbt.insert(new Book(5, "newBook", "someone", true));
+        rbt.printTree();
+        rbt.insert(new Book(25, "newBook", "someone", true));
+        rbt.printTree();
+        rbt.insert(new Book(20, "newBook", "someone", true));
+        rbt.printTree();
+        rbt.insert(new Book(7, "newBook", "someone", true));
+        rbt.printTree();
     }
 }
