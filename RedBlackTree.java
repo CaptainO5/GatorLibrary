@@ -244,18 +244,102 @@ public class RedBlackTree {
     // }
 
     private void balanceAfterDelete(RBTNode py, RBTNode y) {
-        System.out.println("Here to balance after delete!");
         /* Using Xcn cases to balance the tree
          */ 
 
+        // When y is the head
         if (py == null)
             return;
         
         // X = L
         if (py.left == y){
-            
+            // c = b
+            // Case Lb0
+            RBTNode v = py.right;
+            if (v == null || (v.color == RBTNode.BLACK && v.redChildCount() == 0)){
+                if (v != null){
+                    v.flipColor();
+                    colorFlipCount++;
+                }
+                // Lb0 (case 2 py is red)
+                if (py.color == RBTNode.RED){
+                    py.flipColor();
+                    colorFlipCount++;
+                } 
+                // Lb0 (case 1 py is black)
+                else
+                    balanceAfterDelete(py.parent, py);
+            }
+            // c = b
+            else if (v.color == RBTNode.BLACK){
+                // Case Lb1 (case 1)
+                if (v.redChildCount() == 1 && v.right != null && v.right.color == RBTNode.RED){
+                    v.right.flipColor();
+                    colorFlipCount++;
+                    if (py.color == RBTNode.RED){
+                        py.flipColor();
+                        v.flipColor();
+                        colorFlipCount += 2;
+                    }
+                    rotateCaseRR(py);
+                }
+                // Case Lb1 (case 2) and Lb2
+                else {
+                    if (py.color == RBTNode.RED)
+                        py.flipColor();
+                    else
+                        v.left.flipColor();
+                    colorFlipCount++;
+                    rotateCaseRL(py);
+                }
+            }
+            // c = r
+            else{
+                // Case Lr(0)
+                RBTNode w = py.right.left;
+                if (w == null || w.redChildCount() == 0){
+                    v.flipColor();
+                    colorFlipCount++;
+                    if (w != null){
+                        w.flipColor();
+                        colorFlipCount++;
+                    }
+                    rotateCaseRR(py);
+                } 
+                // Case Lr(1) (case 1)
+                else if (w.redChildCount() == 1 && w.right != null && w.right.color == RBTNode.RED){
+                    w.right.flipColor();
+                    colorFlipCount++;
+                    rotateCaseRL(py);
+                }
+                // Case Lr(1) (case 2) and Lr(2)
+                else{
+                    RBTNode x = w.left;
+                    x.flipColor();
+                    colorFlipCount++;
+
+                    // Rotation to make x the parent of py
+                    w.left = x.right;
+                    if (w.left != null)
+                        w.left.parent = w;
+
+                    x.right = v;
+                    v.parent = x;
+
+                    py.right = x.left;
+                    if (py.right != null)
+                        py.right.parent = py;
+                    
+                    x.left = py;
+                    x.parent = py.parent;
+                    py.parent = x;
+
+                    if (x.parent == null)
+                        head = x;
+                }
+            }
         } 
-        // X = R
+        // X = R (Mirror image of the above code)
         else{
             // c = b
             // Case Rb0
@@ -272,7 +356,6 @@ public class RedBlackTree {
                 // Rb0 (case 1 py is black)
                 else
                     balanceAfterDelete(py.parent, py);
-                return;
             } 
             // c = b
             else if (py.left.color == RBTNode.BLACK){
@@ -286,7 +369,6 @@ public class RedBlackTree {
                         colorFlipCount += 2;
                     }
                     rotateCaseLL(py);
-                    return;
                 }
                 // Case Rb1 (case 2) and Rb2
                 else {
@@ -296,7 +378,6 @@ public class RedBlackTree {
                         py.left.right.flipColor();
                     colorFlipCount++;
                     rotateCaseLR(py);
-                    return;
                 }
             }
             // c = r
@@ -312,14 +393,12 @@ public class RedBlackTree {
                         colorFlipCount++;
                     }
                     rotateCaseLL(py);
-                    return;
                 } 
                 // Case Rr(1) (case 1)
                 else if (w.redChildCount() == 1 && w.left != null && w.left.color == RBTNode.RED){
                     w.left.flipColor();
                     colorFlipCount++;
                     rotateCaseLR(py);
-                    return;
                 }
                 // Case Rr(1) (case 2) and Rr(2)
                 else{
@@ -501,28 +580,22 @@ public class RedBlackTree {
     public static void main(String[] args){
         RedBlackTree rbt = new RedBlackTree();
         rbt.insert(new Book(2, "newBook", "someone", true));
-        
         rbt.insert(new Book(1, "newBook", "someone", true));
-        
         rbt.insert(new Book(3, "newBook", "someone", true));
-        rbt.delete(2);
-        System.err.println(rbt.getColoFlipCount());
         rbt.printTree();
         rbt.insert(new Book(4, "newBook", "someone", true));
         rbt.printTree();
         rbt.insert(new Book(0, "newBook", "someone", true));
-        rbt.printTree();
+        System.err.println(rbt.getColoFlipCount());
         rbt.insert(new Book(5, "newBook", "someone", true));
-        rbt.printTree();
-        rbt.delete(0);
         rbt.insert(new Book(25, "newBook", "someone", true));
         rbt.printTree();
         rbt.insert(new Book(20, "newBook", "someone", true));
-        rbt.printTree();
         rbt.insert(new Book(7, "newBook", "someone", true));
-        rbt.delete(20);
         rbt.printTree();
-        rbt.delete(25);        
+        rbt.delete(1);
+        rbt.delete(0);
         rbt.printTree();
+        System.err.println(rbt.getColoFlipCount());
     }
 }
