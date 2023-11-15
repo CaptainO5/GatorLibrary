@@ -342,10 +342,11 @@ public class RedBlackTree {
         // X = R (Mirror image of the above code)
         else{
             // c = b
+            RBTNode v = py.left;
             // Case Rb0
-            if (py.left == null || (py.left.color == RBTNode.BLACK && py.left.redChildCount() == 0)){
-                if (py.left != null){
-                    py.left.flipColor();
+            if (v == null || (v.color == RBTNode.BLACK && v.redChildCount() == 0)){
+                if (v != null){
+                    v.flipColor();
                     colorFlipCount++;
                 }
                 // Rb0 (case 2 py is red)
@@ -358,14 +359,14 @@ public class RedBlackTree {
                     balanceAfterDelete(py.parent, py);
             } 
             // c = b
-            else if (py.left.color == RBTNode.BLACK){
+            else if (v.color == RBTNode.BLACK){
                 // Case Rb1 (case 1)
-                if (py.left.redChildCount() == 1 && py.left.left != null && py.left.left.color == RBTNode.RED){
-                    py.left.left.flipColor();
+                if (v.redChildCount() == 1 && v.left != null && v.left.color == RBTNode.RED){
+                    v.left.flipColor();
                     colorFlipCount++;
                     if (py.color == RBTNode.RED){
                         py.flipColor();
-                        py.left.flipColor();
+                        v.flipColor();
                         colorFlipCount += 2;
                     }
                     rotateCaseLL(py);
@@ -375,7 +376,7 @@ public class RedBlackTree {
                     if (py.color == RBTNode.RED)
                         py.flipColor();
                     else
-                        py.left.right.flipColor();
+                        v.right.flipColor();
                     colorFlipCount++;
                     rotateCaseLR(py);
                 }
@@ -383,7 +384,6 @@ public class RedBlackTree {
             // c = r
             else{
                 // Case Rr(0)
-                RBTNode v = py.left;
                 RBTNode w = py.left.right;
                 if (w == null || w.redChildCount() == 0){
                     v.flipColor();
