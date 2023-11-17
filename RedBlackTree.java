@@ -431,7 +431,7 @@ public class RedBlackTree {
         RBTNode swappedTo = null;
         boolean swapColor = false;
 
-        // When p has two children swap content with a leaf and remove the leaf
+        // When p has two children, swap content with a leaf and dekete that leaf
         if (p.childCount() == 2){
             RBTNode swap = searchMax(p.left);
             Book temp = p.book;
@@ -493,13 +493,13 @@ public class RedBlackTree {
             return p.book;
         }
 
-        boolean sameBeforeBalance = (swappedTo != null && swapColor == swappedTo.color);
+        boolean sameBeforeBalancing = (swappedTo != null && swapColor == swappedTo.color);
         // When y is null or black
         balanceAfterDelete(py, y);
-        boolean sameAfterBalance = (swappedTo != null && swapColor == swappedTo.color);
+        boolean sameAfterBalancing = (swappedTo != null && swapColor == swappedTo.color);
 
-        if (!sameBeforeBalance && sameAfterBalance)
-            colorFlipCount -= 2; // Two color flips for the swapped book => net flip = 0
+        if (!sameBeforeBalancing && sameAfterBalancing)
+            colorFlipCount -= 2; // Two color flips for the swapped book => net = 0
 
         return p.book;
     }
