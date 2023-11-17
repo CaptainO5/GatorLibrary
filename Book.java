@@ -18,21 +18,11 @@ public class Book{
     // Print the book contents
     public String toString(){
         String book = "";
-        book += "BookId = " + id;
+        book += "BookID = " + id;
         book += "\nTitle = " + name;
         book += "\nAuthor = " + authorName;
-
-        book += "\nAvailability = ";
-        if (available)
-            book += "\"Yes\"";
-        else 
-            book += "\"No\"";
-
-        book += "\nBorrowedBy = ";
-        if (borrowedBy == -1)
-            book += "None";
-        else
-            book += borrowedBy;
+        book += "\nAvailability = " + (available?"\"Yes\"":"\"No\"");
+        book += "\nBorrowedBy = " + (borrowedBy == -1?"None":borrowedBy);
         book += "\nReservations = [" + reservationHeap + "]";
 
         return book;

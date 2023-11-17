@@ -93,9 +93,12 @@ public class gatorLibrary{
             return;
         }
 
-        String out = "Book " + bookId + " is no longer available.";
+        String out = "Book " + book.id + " is no longer available.";
 
-        if (book.reservationHeap.size() > 0)
+        if (book.reservationHeap.size() == 1)
+            out += " Reservation made by Patron " + book.reservationHeap + " has been cancelled!";
+
+        if (book.reservationHeap.size() > 1)
             out += " Reservations made by Patrons " + book.reservationHeap + " have been cancelled!";
 
         writeToOut(out);
@@ -149,7 +152,7 @@ public class gatorLibrary{
 
                 // Divide the input text into method and parameters
                 method = cmd.substring(0, cmd.indexOf("("));
-                String[] params = cmd.substring(cmd.indexOf("(") + 1, cmd.indexOf(")")).split(", ");
+                String[] params = cmd.substring(cmd.indexOf("(") + 1, cmd.indexOf(")")).split(", ?");
 
                 switch (method) {
                     case "InsertBook":
@@ -191,7 +194,7 @@ public class gatorLibrary{
                         findClosest(Integer.parseInt(params[0]));
                         break;
                     case "ColorFlipCount":
-                        writeToOut("Colour Flip Count: " + library.getColoFlipCount());
+                        writeToOut("Color Flip Count: " + library.getColorFlipCount());
                         break;
                     default:
                         break;
@@ -225,6 +228,6 @@ public class gatorLibrary{
      */
     private static void writeToOut(String text){
         output.println(text + "\n");
-        System.out.println(text + "\n");
+        // System.out.println(text + "\n");
     }
 }

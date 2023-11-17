@@ -49,13 +49,12 @@ public class PriorityQueue {
     // Return a string of array of patron ids in the heap
     public String toString(){
         String heap_str = "";
-        if (len > 0)
-            for (int i = 0; i < len; i++){
-                if (i == 0)
-                    heap_str += heap[i].id;
-                else
-                    heap_str += ", " + heap[i].id;
-            }
+        for (int i = 0; i < len; i++){
+            if (i == 0)
+                heap_str += heap[i].id;
+            else
+                heap_str += ", " + heap[i].id;
+        }
         return heap_str;
     }
 
