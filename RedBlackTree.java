@@ -154,10 +154,10 @@ public class RedBlackTree {
     private void balanceAfterInsert(RBTNode p){
         RBTNode pp = p.parent;
 
-        // if p is the root
+        // If p is the root
         if (pp == null){
             p.color = RBTNode.BLACK;
-            colorFlipCount--;
+            colorFlipCount--; // Adjust extra black to red change count of the root
             return;
         }
 
@@ -427,16 +427,24 @@ public class RedBlackTree {
         if (p.book.id != id)
             return null;
 
+        // Variables to keep track of the swapped book's node color (before and after swapping)
+        RBTNode swappedTo = null;
+        boolean swapColor = false;
+
+        // When p has two children swap content with a leaf and remove the leaf
         if (p.childCount() == 2){
-            // RBTNode swap = searchMin(p.right);
             RBTNode swap = searchMax(p.left);
             Book temp = p.book;
             if (swap.color != p.color)
                 colorFlipCount++; // Since the color of the "Book" changes!!
             p.book = swap.book;
             swap.book = temp;
+
+            swappedTo = p;
+            swapColor = swap.color;
+
             p = swap;
-        } 
+        }
         
         RBTNode py = p.parent;
         RBTNode y;
@@ -485,8 +493,13 @@ public class RedBlackTree {
             return p.book;
         }
 
+        boolean sameBeforeBalance = (swappedTo != null && swapColor == swappedTo.color);
         // When y is null or black
         balanceAfterDelete(py, y);
+        boolean sameAfterBalance = (swappedTo != null && swapColor == swappedTo.color);
+
+        if (!sameBeforeBalance && sameAfterBalance)
+            colorFlipCount -= 2; // Two color flips for the swapped book => net flip = 0
 
         return p.book;
     }
