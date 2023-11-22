@@ -1,3 +1,6 @@
+/**
+ * Class to maintain the details of a book in the library
+ */
 public class Book{
     public int id;
     private String name;
@@ -15,7 +18,9 @@ public class Book{
         this.reservationHeap = new PriorityQueue();
     }
 
-    // Print the book contents
+    /**
+     * Print the contents of the book object according to the specification
+     *  */ 
     public String toString(){
         String book = "";
         book += "BookID = " + id;

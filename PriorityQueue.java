@@ -7,29 +7,29 @@
 class Patron{
     public int id;
     public int priority;
-    private long timeStamp;
+    private long timestamp;
 
     public Patron(int patronId, int priorityNumber){
         this.id = patronId;
         this.priority = priorityNumber;
-        this.timeStamp = System.nanoTime(); // Take the timestamp at initialization.
+        this.timestamp = System.nanoTime(); // Take the timestamp at initialization.
     }
 
     /**
      * @return Timestamp of the Object creation
-     * Used only for breaking any ties in the priority queue. 
+     * Used only for breaking ties in the priority queue. 
      */
-    public long getTimeStamp(){
-        return this.timeStamp;
+    public long getTimestamp(){
+        return this.timestamp;
     }
 
     public String toString(){
-        return "" + id + "\t" + priority + "\t" + timeStamp;
+        return "" + id + "\t" + priority + "\t" + timestamp;
     }
 }
 
 /**
- * Class to implement Custom Priority Queue
+ * Class to implement a custom Priority Queue
  * 
  * Uses a Min heap with an array as the underlying data structue.
  * Supports put and pop operations:
@@ -46,7 +46,7 @@ public class PriorityQueue {
         len = 0;
     }
 
-    // Return a string of array of patron ids in the heap
+    // Return a string of patron ids in the heap array
     public String toString(){
         String heap_str = "";
         for (int i = 0; i < len; i++){
@@ -58,14 +58,19 @@ public class PriorityQueue {
         return heap_str;
     }
 
-    // Help swap elements in heap array
+    /**
+     * Helper method to swap elements in the heap array
+     * @param i, @param j indices of the elements to be swapped
+     */
     private void swap(int i, int j){
         Patron temp = heap[i];
         heap[i] = heap[j];
         heap[j] = temp;
     }
 
-    // Insert element into the priority queue
+    /**
+     * Insert element into the priority queue
+     *  */ 
     public void put(int patronId, int priorityNumber){
         if (this.len >= 20){
             System.err.println("Heap is full!");
@@ -80,7 +85,7 @@ public class PriorityQueue {
             
             if (heap[parent].priority > heap[current].priority || 
                 (heap[parent].priority == heap[current].priority && 
-                    heap[parent].getTimeStamp() > heap[current].getTimeStamp())){
+                    heap[parent].getTimestamp() > heap[current].getTimestamp())){
                 // Swap if current priority is higher or timestamp is lower than the parent            
                 swap(current, parent);
                 current = parent;
@@ -94,7 +99,6 @@ public class PriorityQueue {
      */ 
     public int pop(){
         if (len <= 0){
-            System.out.println("Heap is empty!");
             return -1;
         }
 
@@ -114,13 +118,13 @@ public class PriorityQueue {
             if (child1 < len &&
                     (heap[child1].priority < heap[smallest].priority ||
                     (heap[child1].priority == heap[smallest].priority &&
-                        heap[child1].getTimeStamp() < heap[smallest].getTimeStamp()))){
+                        heap[child1].getTimestamp() < heap[smallest].getTimestamp()))){
                 smallest = child1;
             }
             if (child2 < len &&
                     (heap[child2].priority < heap[smallest].priority ||
                     (heap[child2].priority == heap[smallest].priority &&
-                        heap[child2].getTimeStamp() < heap[smallest].getTimeStamp()))){
+                        heap[child2].getTimestamp() < heap[smallest].getTimestamp()))){
                 smallest = child2;
             }
 

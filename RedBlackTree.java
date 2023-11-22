@@ -1,6 +1,9 @@
-import java.util.*;
-import java.lang.Math;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Class to store the necessary node information for the tree
+ */
 class RBTNode{
     public static final boolean BLACK = true, RED = false;
 
@@ -24,6 +27,7 @@ class RBTNode{
         this.color = RBTNode.RED;
     }
 
+    // Helper to get the number of children of a node
     public int childCount(){
         int count = 0;
         if (left != null)
@@ -33,6 +37,7 @@ class RBTNode{
         return count;
     }
 
+    // Helper to get the number of red children of a node
     public int redChildCount(){
         int count = 0;
         if (left != null && left.color == RBTNode.RED)
@@ -42,15 +47,15 @@ class RBTNode{
         return count;
     }
 
-    // Check if the current node is the left child of parent
+    // Helper to check if the current node is the left child of parent
     public boolean isLeftChild(){
         return parent.left == this;
     }
 
+    /* XOr to flip the node color
+    *  Equivalent of color = !color
+    */
     public void flipColor(){
-        /* XOr to flip the node color
-        *  Equivalent of color = !color
-        */
         color ^= true;
     }
 
@@ -60,6 +65,9 @@ class RBTNode{
     }
 }
 
+/**
+ * Class to implement a custom Red Black Tree
+ */
 public class RedBlackTree {
     public RBTNode root;
     private int colorFlipCount; // Variable to store the color flip count
@@ -69,6 +77,7 @@ public class RedBlackTree {
         colorFlipCount = 0;
     }
 
+    // Return color flip count
     public int getColorFlipCount(){
         return colorFlipCount;
     }
@@ -100,6 +109,9 @@ public class RedBlackTree {
         return p;
     }
 
+    /**
+     * Helper to left rotate around the node @param n
+     *  */ 
     private void rotateCaseRR(RBTNode n){
         RBTNode m = n.right;
 
@@ -120,6 +132,9 @@ public class RedBlackTree {
         n.parent = m;
     }
 
+    /**
+     * Helper to right rotate around the node @param n
+     */ 
     private void rotateCaseLL(RBTNode n){
         RBTNode m = n.left;
 
@@ -207,6 +222,9 @@ public class RedBlackTree {
         }
     }
 
+    /**
+     * Insert book @param book into the tree
+     */ 
     public void insert(Book book){
         // Search for the location to insert the book
         RBTNode found = search(book.id);
@@ -228,6 +246,9 @@ public class RedBlackTree {
         }
     }
 
+    /**
+     * Get the node with maximum book id of the tree with root @param root
+     *  */ 
     private RBTNode searchMax(RBTNode root){
         RBTNode p = root;
         while(p.right != null){
@@ -236,9 +257,9 @@ public class RedBlackTree {
         return p;
     }
 
+    // Balance the red black tree property after delete
     private void balanceAfterDelete(RBTNode py, RBTNode y) {
-        /* Using Xcn cases to balance the tree
-         */ 
+        // Using Xcn cases to balance the tree
 
         // When y is the root
         if (py == null)
@@ -422,12 +443,19 @@ public class RedBlackTree {
         }
     }
 
+    /**
+     * Delete the node with the given id and return the deleted book
+     * @param id bookId to be deleted from the tree
+     * @return Deleted book if present in the tree else null
+     */
     public Book delete(int id){
+        // Get the node we want to delete
         RBTNode p = search(id);
-        if (p.book.id != id)
+        if (p.book.id != id) // When the node doesn't exist in the tree
             return null;
 
-        // Variables to keep track of the swapped book's node color (before and after swapping)
+        // Variables to keep track of the swapped book's node color 
+        // (if we swap a book for deleting a node with two children)
         RBTNode swappedTo = null;
         boolean swapColor = false;
 
@@ -465,20 +493,22 @@ public class RedBlackTree {
             return p.book;
         }
         
+        // Remove p and add its child to py in place of it
         if (p.left != null){
             if (p.isLeftChild())
                 py.left = p.left;
             else
                 py.right = p.left;
-            y = p.left;
+            y = p.left; // Make y point to the 'deficient' subtree
         } else{
             if (p.isLeftChild())
                 py.left = p.right;
             else
                 py.right = p.right;
-            y = p.right;
+            y = p.right; // Make y point to the 'deficient' subtree
         }
 
+        
         if (y != null)
             y.parent = py;
         
@@ -498,12 +528,14 @@ public class RedBlackTree {
         balanceAfterDelete(py, y);
         boolean sameAfterBalancing = (swappedTo != null && swapColor == swappedTo.color);
 
+        // Adjust the color flip count to reflect the change in color of the book after swapping
         if (!sameBeforeBalancing && sameAfterBalancing)
             colorFlipCount -= 2; // Two color flips for the swapped book => net = 0
 
         return p.book;
     }
 
+    // Return the Books with ids closest to the Target
     public Book[] findNearest(int targetId){
         Book[] nearest = new Book[2];
         RBTNode p = root; // node to traverse and search the tree
@@ -571,6 +603,7 @@ public class RedBlackTree {
         return books;
     }
 
+    // Helper to see the node colors of each book id
     private void printTree(RBTNode root){
         if (root == null)
             return;
@@ -586,7 +619,8 @@ public class RedBlackTree {
         System.out.println("");
     }
 
-    /* Helper method to check the correct implementation
+    /* 
+    * (optional) Helper method to check the correct implementation
     *  - Count number of black nodes in a path from root to any leaf
     */ 
     public int countBlacks(){
@@ -621,24 +655,5 @@ public class RedBlackTree {
         rbt.insert(new Book(3, "newBook", "someone", true));
         System.out.println(rbt.getBook(2));
         System.out.println("Blacks: " + rbt.countBlacks());
-        rbt.printTree();
-        rbt.insert(new Book(4, "newBook", "someone", true));
-        rbt.printTree();
-        rbt.insert(new Book(0, "newBook", "someone", true));
-        System.out.println(rbt.getColorFlipCount());
-        System.out.println("Blacks: " + rbt.countBlacks());
-        rbt.insert(new Book(5, "newBook", "someone", true));
-        rbt.insert(new Book(25, "newBook", "someone", true));
-        rbt.printTree();
-        System.out.println("Blacks: " + rbt.countBlacks());
-        rbt.insert(new Book(20, "newBook", "someone", true));
-        rbt.insert(new Book(7, "newBook", "someone", true));
-        rbt.printTree();
-        System.out.println("Blacks: " + rbt.countBlacks());
-        rbt.delete(1);
-        rbt.delete(0);
-        rbt.printTree();
-        System.out.println("Blacks: " + rbt.countBlacks());
-        System.out.println(rbt.getColorFlipCount());
     }
 }
